@@ -32,8 +32,13 @@ class Screen:
 #         print(background)
         # for row in self.blocks:
         #     print("".join(map(str, row)))
-        for row in self.blocks:
-            print(' '.join(map(lambda cell: str(cell) if cell != 1 else '■', row)))
+        height=len(self.blocks)
+        # print(self.blocks[0])
+        # for row in self.blocks:
+        #     print(' '.join(map(lambda cell: str(cell) if cell != 1 else '■', row)))
+        for height_row in range(height):
+            row=self.blocks[height-1-height_row]
+            print(' '.join(map(lambda cell: str(cell) if cell != 1 else '■', row)))        
 
     #Change the screen plot
     def newBackground(self, Wall, Figure):
@@ -72,16 +77,30 @@ class Movement:
     left=3
     rotate=4
 
+###########To get coordenates for any shape
+def coordinates(shape):
+    i, j=0, 0
+    shape=np.array(shape)
+    coordinates=np.empty([0, 2], dtype=int)
+    for row in range(shape.shape[0]):
+        for element in range(shape.shape[1]):
+            if shape[row, element]==1:
+                temp=np.array([(row, element)])
+                coordinates=np.concatenate((coordinates,temp), axis=0)
+    return coordinates
+
 class Piece:
     Figure=str
     position=[]
     shape=[]
     blocks=[]
     coordinates=[]
-    def __init__(self, shape):
-        self.position=np.array([0,int(width/2)-1])
+    
+    def __init__(self, shape, large):
+        self.position=np.array([height-large,int(width/2)-1])
         self.shape=shape
-        self.blocks=self.position+self.shape 
+        self.coordinates=coordinates(self.shape)
+        self.blocks=self.position+self.coordinates
 
     ##getters
     def get_position(self):
@@ -90,7 +109,6 @@ class Piece:
     def get_blocks(self):
         return(self.blocks)
     
-    ###########To get coordenates
     
     ########################################
     ###To move piece
@@ -106,24 +124,42 @@ class Piece:
                 canMoveRight=False
             if site[1]<=0:
                 canMoveLeft=False
-            if site[0]>=height-1    :
+            if site[0]<=0    :
                 canMoveDown=False
         return canMoveRight, canMoveLeft, canMoveDown
 
     def moveRight(self):
         self.position = self.position + np.array([0,1])
-        self.blocks=self.position+self.shape
+        self.blocks=self.position+self.coordinates
 
     def moveLeft(self):
         self.position = self.position + np.array([0,-1])
-        self.blocks=self.position+self.shape
+        self.blocks=self.position+self.coordinates
 
     def moveDown(self):
-        self.position = self.position + np.array([1,0])
-        self.blocks=self.position+self.shape
+        self.position = self.position + np.array([-1,0])
+        self.blocks=self.position+self.coordinates
 
-    def rotatePiece():
-        pass
+    def rotate_shape(self):
+        # self.shape=[list(row) for row in zip(*self.shape[::-1])]
+        self.shape=[list(row) for row in zip(*self.shape[::-1])]
+        self.coordinates=coordinates(self.shape)
+        self.blocks=self.position+self.coordinates
+
+    def pieceOutScreen(self):
+        coordinates=self.get_blocks()
+        outRight=False
+        outLeft=False
+        outUp=False
+        for site in coordinates:
+            if site[1]>=width:
+                outRight=True
+            if site[1]<0:
+                outLeft=True
+            if site[0]>=height    :
+                outUp=True
+        return outRight, outLeft, outUp
+
 
     def movePiece(self):
         event=keyboard.read_event()
@@ -138,6 +174,21 @@ class Piece:
             if canMoveDown:
                 if event.name == "s":
                     self.moveDown()
+            if event.name == "space":
+                self.rotate_shape()
+                outRight, outLeft, outUp =self.pieceOutScreen()
+                while outRight:
+                    self.moveLeft()
+                    outRight, outLeft, outUp =self.pieceOutScreen()
+                while outLeft:
+                    self.moveRight()
+                    outRight, outLeft, outUp =self.pieceOutScreen()
+                while outUp:
+                    self.moveDown()
+                    outRight, outLeft, outUp =self.pieceOutScreen()
+                #     pass
+
+
     
         
 #####################################################            
@@ -147,25 +198,25 @@ class Square(Piece):
     def __init__(self):
         """"Define the figure square, with the initial position and the shape
         for a square for each pixel for itself """
-        shape=np.array([(0,0),(1,0),(0,1),(1,1)]) 
-        super().__init__(shape)
+        shape=[[1, 1], [1, 1]]
+        super().__init__(shape, 2)
         
 class L_right(Piece):
     def __init__(self):
-        shape=np.array([(0,0),(1,0),(2,0),(2,1)])        
-        super().__init__(shape)
+        shape=[[1, 1, 1], [0, 0, 1]]        
+        super().__init__(shape, 2)
 
 class L_left(Piece):
     def __init__(self):
-        shape=np.array([(0,1),(1,1),(2,1),(2,0)])        
-        super().__init__(shape)
+        shape=[[1, 1, 1], [1, 0, 0]]      
+        super().__init__(shape, 2)
         
 class T_piece(Piece):
-    def __init__(self):
-        shape=np.array([(1,0),(1,1),(1,2),(0,1)])        
-        super().__init__(shape)  
+    def __init__(self):     
+        shape=[[1, 1, 1], [0, 1, 0]]                
+        super().__init__(shape, 2)  
 
 class I_piece(Piece):
     def __init__(self):
-        shape=np.array([(0,0),(1,0),(2,0),(3,0)])        
-        super().__init__(shape)    
+        shape=[[1, 1, 1, 1]]        
+        super().__init__(shape, 1)    

@@ -12,10 +12,10 @@ def tetris():
     
     wall=Wall()
     
-    # new_piece=Square()
-    # new_piece=L_right()
+    # new_piece=Square()  
+    new_piece=L_right()
     # new_piece=L_left()
-    new_piece=T_piece()
+    # new_piece=T_piece()
     # new_piece=I_piece()
     
     screen.newBackground(wall, new_piece)
@@ -39,7 +39,7 @@ def tetris():
         print(f"Piece can move to down: {new_piece.pieceLimits()[2]}")
 
 
-        time.sleep(0.05)    
+        time.sleep(0.02)    
 
 
 if __name__ == '__main__':
