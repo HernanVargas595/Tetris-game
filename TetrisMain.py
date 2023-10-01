@@ -12,11 +12,11 @@ def tetris():
     
     wall=Wall()
     
-    new_piece=Square()
-#     new_piece=L_right()
-#     new_piece=L_left()
-    # new_piece=T_piece()
-#     new_piece=I_piece()
+    # new_piece=Square()
+    # new_piece=L_right()
+    # new_piece=L_left()
+    new_piece=T_piece()
+    # new_piece=I_piece()
     
     screen.newBackground(wall, new_piece)
     screen.plotBackground()
@@ -34,6 +34,11 @@ def tetris():
         screen.newBackground(wall, new_piece)
         screen.plotBackground()
         print(f"Score: {score}")
+        print(f"Piece can move to right: {new_piece.pieceLimits()[0]}")
+        print(f"Piece can move to left: {new_piece.pieceLimits()[1]}")
+        print(f"Piece can move to down: {new_piece.pieceLimits()[2]}")
+
+
         time.sleep(0.05)    
 
 
