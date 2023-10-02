@@ -1,93 +1,11 @@
 import numpy as np
 import os
 import keyboard
+import random
 
 ###Parameters of game table
 height, width=20, 10
 
-
-#####################################################            
-#####################################################            
-#####################################################            
-####Define classes
-
-#Define class of screen to show the game
-class Screen:
-    blocks=[]
-    #init method to define an empty wall
-    def __init__(self):
-        self.blocks=np.zeros((height,width), dtype=int)
-        #To crete an matrix for background empty with shape (height, width)
-    
-    ##getters
-    def get_blocks(self):
-        return(self.blocks)
-        
-    #Plot the wall
-    ##We have to improve the form to show the screen
-    def plotBackground(self):
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print("Welcome to game")
-        print("\n")
-#         print(background)
-        # for row in self.blocks:
-        #     print("".join(map(str, row)))
-        height=len(self.blocks)
-        # print(self.blocks[0])
-        # for row in self.blocks:
-        #     print(' '.join(map(lambda cell: str(cell) if cell != 1 else '■', row)))
-        for height_row in range(height):
-            row=self.blocks[height-1-height_row]
-            print(' '.join(map(lambda cell: str(cell) if cell != 1 else '■', row)))        
-
-    #Change the screen plot
-    def newBackground(self, Wall, Figure):
-        screenshot=Wall.get_blocks().copy()
-        coordinates_blocks=Figure.get_blocks()
-        coordinates_blocks=tuple(map(tuple, coordinates_blocks))
-        ##Painted blocks
-        for pixel in coordinates_blocks:
-            # print(pixel)
-            screenshot[pixel]=1      
-        self.blocks=screenshot
-
-            
-            
-#####################################################            
-#####################################################            
-#####################################################            
-
-class Wall():
-    blocks=[]
-    def __init__(self):
-        self.blocks=np.zeros((height,width), dtype=int)
-
-    ##getters
-    def get_blocks(self):
-        return(self.blocks)
-#     pass
-
-#####################################################            
-#####################################################            
-#####################################################            
-
-class Movement:
-    down=1
-    right=2
-    left=3
-    rotate=4
-
-###########To get coordenates for any shape
-def coordinates(shape):
-    i, j=0, 0
-    shape=np.array(shape)
-    coordinates=np.empty([0, 2], dtype=int)
-    for row in range(shape.shape[0]):
-        for element in range(shape.shape[1]):
-            if shape[row, element]==1:
-                temp=np.array([(row, element)])
-                coordinates=np.concatenate((coordinates,temp), axis=0)
-    return coordinates
 
 class Piece:
     Figure=str
@@ -106,11 +24,14 @@ class Piece:
     def get_position(self):
         return(self.position)
     
-    def get_blocks(self):
+    def get_coordinates(self):
         return(self.coordinates)
 
     def get_blocks(self):
         return(self.blocks)
+    
+    def set_blocks(self, value):
+        self.blocks=value
     
     
     ########################################
@@ -201,24 +122,48 @@ for a square for each pixel for itself """
 class Square(Piece):
     def __init__(self):
         shape=[[1, 1], [1, 1]]
-        super().__init__(shape, 2)
+        large=2
+        super().__init__(shape, large)
         
 class L_right(Piece):
     def __init__(self):
         shape=[[1, 1, 1], [0, 0, 1]]        
-        super().__init__(shape, 2)
+        large=2
+        super().__init__(shape, large)
 
 class L_left(Piece):
     def __init__(self):
         shape=[[1, 1, 1], [1, 0, 0]]      
-        super().__init__(shape, 2)
+        large=2
+        super().__init__(shape, large)
         
 class T_piece(Piece):
     def __init__(self):     
-        shape=[[1, 1, 1], [0, 1, 0]]                
-        super().__init__(shape, 2)  
+        shape=[[1, 1, 1], [0, 1, 0]]
+        large=2                
+        super().__init__(shape, large)  
 
 class I_piece(Piece):
     def __init__(self):
-        shape=[[1, 1, 1, 1]]        
-        super().__init__(shape, 1)    
+        shape=[[1, 1, 1, 1]]       
+        large=1 
+        super().__init__(shape, large)    
+
+
+###########To get coordenates for any shape
+def coordinates(shape):
+    i, j=0, 0
+    shape=np.array(shape)
+    coordinates=np.empty([0, 2], dtype=int)
+    for row in range(shape.shape[0]):
+        for element in range(shape.shape[1]):
+            if shape[row, element]==1:
+                temp=np.array([(row, element)])
+                coordinates=np.concatenate((coordinates,temp), axis=0)
+    return coordinates
+
+
+def randomPiece():
+    allPieces=[Square(), L_right(), L_left(), T_piece(), T_piece(), I_piece()]
+    return random.choice(allPieces)
+
