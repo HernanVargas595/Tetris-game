@@ -85,31 +85,31 @@ class Piece:
         return outRight, outLeft, outUp
 
 
-    def movePiece(self):
-        event=keyboard.read_event()
-        canMoveRight, canMoveLeft, canMoveDown=self.pieceLimits()
-        if event.event_type == keyboard.KEY_DOWN:
-            if canMoveRight:
-                if event.name == "d":
-                    self.moveRight()
-            if canMoveLeft:
-                if event.name == "a":
-                    self.moveLeft()
-            if canMoveDown:
-                if event.name == "s":
-                    self.moveDown()
-            if event.name == "space":
-                self.rotate_shape()
-                outRight, outLeft, outUp =self.pieceOutScreen()
-                while outRight:
-                    self.moveLeft()
-                    outRight, outLeft, outUp =self.pieceOutScreen()
-                while outLeft:
-                    self.moveRight()
-                    outRight, outLeft, outUp =self.pieceOutScreen()
-                while outUp:
-                    self.moveDown()
-                    outRight, outLeft, outUp =self.pieceOutScreen()
+    # def movePieceScreen(self):
+    #     event=keyboard.read_event()
+    #     canMoveRight, canMoveLeft, canMoveDown=self.pieceLimits()
+    #     if event.event_type == keyboard.KEY_DOWN:
+    #         if canMoveRight:
+    #             if event.name == "d":
+    #                 self.moveRight()
+    #         if canMoveLeft:
+    #             if event.name == "a":
+    #                 self.moveLeft()
+    #         if canMoveDown:
+    #             if event.name == "s":
+    #                 self.moveDown()
+    #         if event.name == "space":
+    #             self.rotate_shape()
+    #             outRight, outLeft, outUp =self.pieceOutScreen()
+    #             while outRight:
+    #                 self.moveLeft()
+    #                 outRight, outLeft, outUp =self.pieceOutScreen()
+    #             while outLeft:
+    #                 self.moveRight()
+    #                 outRight, outLeft, outUp =self.pieceOutScreen()
+    #             while outUp:
+    #                 self.moveDown()
+    #                 outRight, outLeft, outUp =self.pieceOutScreen()
                 #     pass
 
 
@@ -149,6 +149,17 @@ class I_piece(Piece):
         large=1 
         super().__init__(shape, large)    
 
+class Z_right(Piece):
+    def __init__(self):
+        shape=[[1, 1, 0], [0, 1, 1]]       
+        large=2
+        super().__init__(shape, large)    
+
+class Z_left(Piece):
+    def __init__(self):
+        shape=[[0, 1, 1], [1, 1, 0]]       
+        large=2 
+        super().__init__(shape, large)    
 
 ###########To get coordenates for any shape
 def coordinates(shape):
@@ -164,6 +175,6 @@ def coordinates(shape):
 
 
 def randomPiece():
-    allPieces=[Square(), L_right(), L_left(), T_piece(), T_piece(), I_piece()]
+    allPieces=[Square(), L_right(), L_left(), T_piece(), T_piece(), I_piece(), Z_right(), Z_left()]
     return random.choice(allPieces)
 
